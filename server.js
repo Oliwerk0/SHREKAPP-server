@@ -122,6 +122,15 @@ wss.on('connection', (ws) => {
         break;
       }
 
+      // Start game (host only)
+      case 'START_GAME': {
+        const room = rooms.get(ws.roomCode);
+        if (!room || room.players[0].id !== ws.playerId) break; // only host can start
+        room.started = true;
+        broadcastToRoom(room, { type: 'GAME_START' });
+        break;
+      }
+
       // Paddle move
       case 'PADDLE_MOVE': {
         const room = rooms.get(ws.roomCode);
